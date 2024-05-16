@@ -38,4 +38,17 @@ public class MemberDao {
 			System.out.println("m_phone : " + memberVo.getM_phone());
 		}
 	}
+	
+	public MemberVo selectMember(MemberVo memberVo) {
+		System.out.println("[MemberDao] selectMember() 요청 성공!");
+		
+		MemberVo signInedMember = memberDB.get(memberVo.getM_id());
+		
+		if(signInedMember != null && memberVo.getM_pw().equals(signInedMember.getM_pw()))
+				return signInedMember;
+		else
+			return null;
+	}
+	
+
 }

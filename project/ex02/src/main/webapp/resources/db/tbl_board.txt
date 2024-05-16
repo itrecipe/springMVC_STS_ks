@@ -1,0 +1,100 @@
+-- 시퀀스 생성 대신 AUTO_INCREMENT 사용
+-- MySQL에는 내장 시퀀스 기능이 없습니다. 대신, AUTO_INCREMENT를 사용합니다.
+
+CREATE TABLE tbl_board (
+  bno INT UNSIGNED AUTO_INCREMENT,
+  title VARCHAR(200) NOT NULL,
+  content VARCHAR(2000) NOT NULL,
+  writer VARCHAR(50) NOT NULL,
+  regdate DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updatedate DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (bno)
+);
+
+-- MySQL은 COMMIT이 필요하지 않습니다. (단일 DDL 명령은 자동 커밋됩니다.)
+
+INSERT INTO tbl_board (title, content, writer) 
+VALUES ('테스트 제목', '테스트 내용', 'user00');
+
+-- AUTO_INCREMENT를 사용하므로, seq_board는 필요 없습니다.
+
+CREATE TABLE TBL_REPLY (
+  rno INT UNSIGNED AUTO_INCREMENT NOT NULL, -- pk
+  bno INT UNSIGNED NOT NULL, -- FK
+  reply VARCHAR(1000) NOT NULL,
+  replyer VARCHAR(50) NOT NULL,
+  replyDate DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updatedate DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (rno),
+  CONSTRAINT fk_reply_board FOREIGN KEY (bno) REFERENCES tbl_board (bno)
+);
+
+-- AUTO_INCREMENT를 사용하므로, seq_reply는 필요 없습니다.
+
+CREATE INDEX idx_reply ON tbl_reply (bno DESC, rno ASC);
+
+-- 다른 테이블들도 유사하게 변환합니다.
+
+CREATE TABLE tbl_sample1(col1 VARCHAR(500));
+
+CREATE TABLE tbl_sample2(col2 VARCHAR(50));
+
+ALTER TABLE tbl_board ADD (replycnt INT DEFAULT 0);
+
+UPDATE tbl_board SET replycnt = (SELECT COUNT(rno) FROM tbl_reply WHERE tbl_reply.bno = tbl_board.bno);
+
+CREATE TABLE tbl_attach (
+  uuid VARCHAR(100) NOT NULL,
+  uploadPath VARCHAR(200) NOT NULL,
+  fileName VARCHAR(100) NOT NULL,
+  filetype CHAR(1) DEFAULT 'I',
+  bno INT UNSIGNED,
+  PRIMARY KEY (uuid),
+  CONSTRAINT fk_board_attach FOREIGN KEY (bno) REFERENCES tbl_board(bno)
+);
+
+-- 사용자 정의 보안 테이블도 유사하게 변환합니다.
+
+CREATE TABLE users (
+  username VARCHAR(50) NOT NULL PRIMARY KEY,
+  password VARCHAR(50) NOT NULL,
+  enabled CHAR(1) DEFAULT '1'
+);
+      
+CREATE TABLE authorities (
+  username VARCHAR(50) NOT NULL,
+  authority VARCHAR(50) NOT NULL,
+  CONSTRAINT fk_authorities_users FOREIGN KEY(username) REFERENCES users(username),
+  CONSTRAINT ix_auth_username UNIQUE (username, authority)
+);
+
+-- 사용자 정보 및 권한 정보 삽입
+
+INSERT INTO users (username, password) VALUES ('user00', 'pw00');
+-- 나머지 사용자 및 권한 정보도 유사하게 삽입합니다.
+
+-- 사용자 정의 보안 방식 테이블
+
+CREATE TABLE tbl_member (
+  userid VARCHAR(50) NOT NULL PRIMARY KEY,
+  userpw VARCHAR(100) NOT NULL,
+  username VARCHAR(100) NOT NULL,
+  regdate DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updatedate DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  enabled CHAR(1) DEFAULT '1'
+);
+
+CREATE TABLE tbl_member_auth (
+  userid VARCHAR(50) NOT NULL,
+  auth VARCHAR(50) NOT NULL,
+  CONSTRAINT fk_member_auth FOREIGN KEY(userid) REFERENCES tbl_member(userid)
+);
+
+-- remember-me 관련 테이블
+
+CREATE TABLE persistent_logins (
+  username VARCHAR(64) NOT NULL,
+  series VARCHAR(64) PRIMARY KEY,
+  token VARCHAR(64) NOT NULL,
+  last_used TIMESTAMP NOT NULL
+);

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.exam.board.mapper.ReplyMapper">
+
+	<insert id="insert" parameterType="com.exam.board.domain.ReplyVO">
+		<![CDATA[
+		INSERT INTO tbl_reply (bno, reply, replyer)
+		VALUES (#{bno}, #{reply}, #{replyer})
+		]]>
+	</insert>
+	
+	<select id="read" resultType="com.exam.board.domain.ReplyVO">
+		<![CDATA[
+		SELECT * FROM tbl_reply WHERE rno = #{rno}
+		]]>
+	</select>
+	
+	<delete id="delete">
+		<![CDATA[
+		DELETE FROM tbl_reply WHERE rno = #{rno}
+		]]>
+	</delete>
+	
+	<delete id="deleteAll">
+		<![CDATA[
+		DELETE FROM tbl_reply WHERE bno = #{bno}
+		]]>
+	</delete>
+	
+	<update id="update">
+		<![CDATA[
+		UPDATE tbl_reply 
+		SET reply = #{reply}, updatedate = NOW() 
+		WHERE rno = #{rno}
+		]]>
+	</update>	
+		 
+	<!-- 댓글에 페이지 적용 안하는 경우
+	 <select id="getListWithPaging"
+		resultType="org.ezen.ex02.domain.ReplyVO">
+		<![CDATA[
+		SELECT rno, bno, reply, replyer, replyDate, updatedate
+		FROM tbl_reply
+		WHERE bno = #{bno}
+		ORDER BY rno ASC		
+		]]>
+	</select>
+	 -->
+	 
+	 <!-- 댓글에 페이지 적용 -->
+	 <select id="getListWithPaging" resultType="com.exam.board.domain.ReplyVO">
+		<![CDATA[
+		SELECT rno, bno, reply, replyer, replydate, updatedate
+		FROM tbl_reply
+		WHERE bno = #{bno}
+		ORDER BY rno ASC
+		LIMIT #{cri.pageNum} * #{cri.amount} OFFSET (#{cri.pageNum} - 1) * #{cri.amount}
+		]]>
+	</select>
+	
+	<select id="getCountByBno" resultType="int">
+		<![CDATA[
+		SELECT COUNT(rno) FROM tbl_reply WHERE bno = #{bno}
+		]]>
+	</select>
+	
+</mapper>

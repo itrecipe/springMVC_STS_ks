@@ -3,7 +3,6 @@ package com.company.hello.member;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class MemberController {
@@ -66,6 +65,23 @@ public class MemberController {
 		
 		memberService.signUpConfirm(memberVo);
 
-		return "home";
+		return "sign_up_ok";
 	}
+	
+	@RequestMapping("/signInConfirm")
+	public String signInConfirm(MemberVo memberVo) {
+		System.out.println("[MemberController] signInConfirm() 요청 성공!");
+		
+		//서비스 호출
+		MemberVo signInedMember = memberService.signInConfirm(memberVo);
+		
+		if(signInedMember != null) //로그인 성공
+			return "sign_in_ok"; 
+		else
+			return "sign_in_ng"; //로그인 실패
+		
+		//return null;
+	}
+	
+	
 }	
