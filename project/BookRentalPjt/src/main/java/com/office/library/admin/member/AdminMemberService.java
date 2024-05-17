@@ -1,5 +1,7 @@
 package com.office.library.admin.member;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,5 +32,26 @@ public class AdminMemberService {
 		} else {
 			return ADMIN_ACCOUNT_ALREADY_EXIST;
 		}
+	}
+	
+	public AdminMemberVo loginConfirm(AdminMemberVo adminMemberVo) {
+		System.out.println("[AdminMemberService] loginConfirm() 요청 성공!");
+		
+		AdminMemberVo loginedAdminMemberVo =
+				adminMemberDao.selectAdmin(adminMemberVo);
+		
+		if(loginedAdminMemberVo != null)
+			System.out.println("[AdminMemberService] ADMIN MEMBER LOGIN SUCCESS!!");
+		else 
+			System.out.println("[AdminMemberService] ADMIN MEMBER LOGIN FAIL!!");
+		
+		return loginedAdminMemberVo;
+	}
+	
+	public List<AdminMemberVo> listupAdmin() {
+		System.out.println("[AdminMemberController] listupAdmin()");
+	
+		//dao의 selectAdmins()를 아직 생성하지 않아서 에러가 나오고 있으니 생성해줄것
+		return adminMemberDao.selectAdmins();
 	}
 }
