@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.office.library.book.BookVo;
+import com.office.library.book.HopeBookVo;
+import com.office.library.book.RentalBookVo;
 
 @Service
 public class BookService {
@@ -18,7 +20,7 @@ public class BookService {
 	BookDao bookDao;
 
 	public int registerBookConfirm(BookVo bookVo) {
-		System.out.println("[BookService] registerBookConfirm() 호출!");
+		System.out.println("[admin.BookService] registerBookConfirm() 호출!");
 
 		boolean isISBN = bookDao.isISBN(bookVo.getB_isbn());
 
@@ -35,14 +37,81 @@ public class BookService {
 	}
 
 	public List<BookVo> searchBookConfirm(BookVo bookVo) {
-		System.out.println("[BookService] searchBookConfirm()");
-		
+		System.out.println("[admin.BookService] searchBookConfirm()");
+
 		return bookDao.selectBooksBySearch(bookVo);
 	}
-	
+
 	public BookVo bookDetail(int b_no) {
-		System.out.println("[BookService] bookDetail()");
-		
+		System.out.println("[admin.BookService] bookDetail()!");
+
 		return bookDao.selectBook(b_no);
+	}
+
+	public BookVo modifyBookForm(int b_no) {
+		System.out.println("[admin.BookService] modifyBookForm()!");
+
+		return bookDao.selectBook(b_no);
+	}
+
+	public int modifyBookConfirm(BookVo bookVo) {
+		System.out.println("[admin.BookService] modifyBookConfirm()!");
+
+		return bookDao.updateBook(bookVo);
+	}
+
+	public int deleteBookConfirm(int b_no) {
+		System.out.println("[admin.BookService] deleteBookConfirm()!");
+
+		return bookDao.deleteBook(b_no);
+	}
+
+	public List<RentalBookVo> getRentalBooks() {
+		System.out.println("[admin.BookService] getRentalBooks()!");
+
+		return bookDao.selectRentalBooks();
+	}
+
+	public int returnBookConfirm(int b_no, int rb_no) {
+		System.out.println("[admin.BookService] returnBookConfirm()!");
+
+		int result = bookDao.updateRentalBook(rb_no);
+		
+		if(result > 0)
+			result = bookDao.updateBook(b_no);
+		
+		return result;
+	}
+	
+	public List<HopeBookVo> getHopeBooks() {
+		System.out.println("[admin.BookService] getHopeBooks()!");
+		
+		return bookDao.selectHopeBooks();
+	}
+	
+	public int registerHopeBookConfirm(BookVo bookVo, int hb_no) {
+		System.out.println("[admin.BookService] registerHopeBookConfirm()!");
+		
+		boolean isISBN = bookDao.isISBN(bookVo.getB_isbn());
+		
+		if(!isISBN) {
+			int result = bookDao.insertBook(bookVo);
+
+			if(result > 0) {
+				bookDao.updateHopeBookResult(hb_no);
+				
+				return BOOK_REGISTER_SUCCESS;
+			}
+			else
+				return BOOK_REGISTER_FAIL;
+		} else {
+			return BOOK_ISBN_ALREADY_EXIST;
+		}
+	}
+	
+	public List<BookVo> getAllBooks() {
+		System.out.println("[admin.BookService] getAllBooks()!");
+
+		return bookDao.selectAllBooks();
 	}
 }

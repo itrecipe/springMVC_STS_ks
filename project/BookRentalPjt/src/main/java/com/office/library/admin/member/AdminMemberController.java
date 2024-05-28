@@ -124,8 +124,10 @@ public class AdminMemberController {
 		
 		String nextPage = "admin/member/modify_account_form";
 		
-		AdminMemberVo loginAdminMemberVo = (AdminMemberVo) session.getAttribute("loginedAdminMemberVo");
-		if(loginAdminMemberVo == null) 
+		AdminMemberVo loginedAdminMemberVo = 
+				(AdminMemberVo) session.getAttribute("loginedAdminMemberVo");
+		
+		if(loginedAdminMemberVo == null) 
 			nextPage = "redirect:/admin/member/loginForm";
 		return nextPage;
 	}

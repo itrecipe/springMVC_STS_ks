@@ -144,7 +144,7 @@ public class AdminMemberService {
 	}
 	
 	private void sendNewPasswordByMail(String toMailAddr, String newPassword) {
-		System.out.println("[AdminmemberService] sendNewPasswordByMail()");
+		System.out.println("[AdminMemberService] sendNewPasswordByMail()!");
 		
 		final MimeMessagePreparator mimeMessagePreparator = new MimeMessagePreparator() {
 			

@@ -22,8 +22,30 @@
 		<beans:property name="suffix" value=".jsp" />
 	</beans:bean>
 	
-	<context:component-scan base-package="com.office.library" />
-	
-	
-	
+	<!-- com.office.library.admin 패키지 하위에 있는 모든 컴포넌트들을 사용하도록 스캔한다. -->
+	<!-- <context:component-scan base-package="com.office.library" /> -->
+
+	<!-- 13장에서 동일한 이름의 빈들이 존재하여 충돌을 막고자 변경함 -->
+	<context:component-scan base-package="com.office.library"
+		name-generator="com.office.library.config.LibraryBeanNameGenerator" />
+		
+	<!-- HandleInterceptor 등록 : 서블릿이 실행될때 인터셉터를 실행하도록 설정한다. 
+		로그인 리다이렉트 기능을 대체한 기능이며, 
+		리다이렉트는 페이지 접속 횟수가 많아지면 뻗어버리기 때문에 인터셉터를 설정해줬음
+	-->
+	<interceptors>
+		<interceptor>
+			<mapping path="/book/user/rentalBookConfirm" />
+			<mapping path="/user/member/modifyAccountForm" />
+			<mapping path="/user/member/modifyAccountConfirm" />
+			<mapping path="/book/user/rentalBookConfirm" />
+			<mapping path="/book/user/enterBookshelf" />
+			<mapping path="/book/user/requestHopeBookForm" />
+			<!-- 희망 도서 요청 목록은 로그인 상태에서 이용할 수 있기 때문에 인터셉터에 추가 해준다. -->
+			<mapping path="/book/user/listupRequestHopeBook" />
+			<beans:bean 
+				class="com.office.library.user.member.UserMemberLoginInterceptor"/>
+		</interceptor>
+	</interceptors>
+		
 </beans:beans>

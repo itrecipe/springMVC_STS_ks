@@ -20,12 +20,22 @@
 		name="username" value="root" /> <property name="password" value="1234" /> 
 		</bean> -->
 		
-	<!-- MySQL Connection 객체 -->
+	<!-- MySQL Connection 객체 : 프로퍼티 설정 전 -->
+	<!--  
 	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName" value="com.mysql.cj.jdbc.Driver" />
 		<property name="url" value="jdbc:mysql://127.0.0.1:3306/db_library?useSSL=false&amp;serverTimezone=UTC" />
 		<property name="username" value="root" />
 		<property name="password" value="1234" />
+	</bean>
+	-->
+	
+	<!-- MySQL Connection 객체 : 프로퍼티 설정 후 -->
+	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="#{infoProperty['db.driver']}" />
+		<property name="url" value="#{infoProperty['db.url']}" />
+		<property name="username" value="{infoProperty['db.username']}" />
+		<property name="password" value="{infoProperty['db.password']}" />
 	</bean>
 
 	<!-- JdbcTemplate 객체 -->

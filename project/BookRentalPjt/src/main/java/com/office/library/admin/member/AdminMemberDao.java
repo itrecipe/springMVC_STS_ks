@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -99,6 +100,7 @@ public class AdminMemberDao {
 		//예외처리
 		try {
 
+			/* BeanPropertyRowMapper 적용 전 코드
 			adminMemberVos = jdbcTemplate.query(sql, new RowMapper<AdminMemberVo>() {
 
 				@Override
@@ -122,7 +124,12 @@ public class AdminMemberDao {
 					return adminMemberVo;
 				}
 			}, adminMemberVo.getA_m_id());
-
+			*/
+			
+			//BeanPropertyRowMapper 적용 후 코드, 이전에 비해 단, 2줄만으로 깔끔하게 작성이 가능한 모습을 보여주고 있다.
+			RowMapper<AdminMemberVo> rowMapper = BeanPropertyRowMapper.newInstance(AdminMemberVo.class);
+			adminMemberVos = jdbcTemplate.query(sql, rowMapper, adminMemberVo.getA_m_id());
+			
 			if (!passwordEncoder.matches(adminMemberVo.getA_m_pw(),
 					adminMemberVos.get(0).getA_m_pw()))
 				adminMemberVos.clear();
